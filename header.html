@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개벤져스 헤더</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  header {
+    position: relative;
+    background-color: skyblue;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url(https://cdn.shopify.com/s/files/1/0841/2764/5718/articles/best_20image_20size_20for_20website.jpg?v=1730857249&originalWidth=1848&originalHeight=782&width=1800);
+    background-size: cover;
+    background-position: center; 
+  }
+
+  .header-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #0a0303;
+    text-align: center;
+  }
+
+ 
+  .menu-wrapper {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .menu-button {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 2;
+  }
+
+  .menu-button img {
+    width: 28px;
+    height: 28px;
+  }
+
+ 
+  .menu-list {
+    display: none;
+    flex-direction: column;
+    margin-top: 5px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    width: 150px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .menu-list button {
+    background: none;
+    border: none;
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .menu-list button:hover {
+    background-color: #f0f0f0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">개벤져스</div>
+
+  <div class="menu-wrapper">
+    <button class="menu-button" id="menuButton">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/375px-Hamburger_icon.svg.png" alt="메뉴">
+    </button>
+    <div class="menu-list" id="menuList">
+      <button>홈</button>
+      <button>소개</button>
+      <button>프로젝트</button>
+      <button>문의</button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const menuButton = document.getElementById('menuButton');
+  const menuList = document.getElementById('menuList');
+
+  menuButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menuList.style.display = menuList.style.display === 'flex' ? 'none' : 'flex';
+    menuList.style.flexDirection = 'column';
+  });
+
+  document.addEventListener('click', () => {
+    menuList.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
