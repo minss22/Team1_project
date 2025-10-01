@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>민서 페이지</title>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- 부트스트랩 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&display=swap');
+
+        * {
+            font-family: "Noto Sans KR", sans-serif;
+        }
+
+        header {
+            margin: 50px 100px;
+            /* 내용물을 정렬 */
+            display: flex;
+            /* Flexbox 사용 */
+            flex-direction: row;
+            /* 가로로 쌓기 */
+            align-items: center;
+            /* 주축을 기준으로 수직 가운데 정렬 */
+            justify-content: left;
+            /* 주축을 기준으로 수평 왼쪽 정렬 */
+        }
+
+        .picture {
+            box-shadow: 0px 0px 3px 0px gray;
+            padding: 5px;
+        }
+
+        .text {
+            margin-left: 80px;
+        }
+
+        .card-title {
+            font-size: xxx-large;
+            margin-bottom: 40px;
+        }
+
+        .card-text {
+            font-size: large;
+            margin-left: 10px;
+        }
+
+        .btn {
+            margin: 0px 0px auto auto;
+        }
+
+        hr {
+            width: 90%;
+            margin: 0px auto 50px;
+        }
+
+        main > div {
+            margin: 50px auto;
+            width: 90%;
+            height: 500px;
+        }
+
+        .form-control {
+            width: 90%;
+        }
+    </style>
+
+    <script type="module">
+        // Firebase SDK 라이브러리 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // Firebase 구성 정보 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsesE7yVV64jTu2b3PHU9RpZGv5_wkSSE",
+            authDomain: "sparta-2cdd7.firebaseapp.com",
+            projectId: "sparta-2cdd7",
+            storageBucket: "sparta-2cdd7.firebasestorage.app",
+            messagingSenderId: "713016106607",
+            appId: "1:713016106607:web:47b9cfd575366e7411b79a"
+        };
+
+        // Firebase 인스턴스 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="picture">
+            <img src="https://img.hankyung.com/photo/201706/AA.14077862.1.jpg" alt="사진" width="400px" height="300">
+        </div>
+        <div class="text">
+            <h1 class="card-title">권민서</h1>
+            <p class="card-text">MBTI: ISFJ</p>
+            <p class="card-text">이메일: kms141516@gmail.com</p>
+            <p class="card-text">블로그: https://velog.io/@minss_22/posts</p>
+        </div>
+        <div class="btn">
+            <button type="button" class="btn btn-outline-info">수정</button>
+        </div>
+    </header>
+    <hr />
+    <main>
+        <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        </div>
+    </main>
+    <hr />
+    <footer>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Recipient’s username" aria-label="Recipient’s username"
+                aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+        </div>
+    </footer>
+</body>
+
+</html>
