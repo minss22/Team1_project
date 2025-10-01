@@ -19,16 +19,12 @@
         }
 
         header {
-            margin: 50px 100px;
-            /* 내용물을 정렬 */
+            width: 80%;
+            margin: 50px auto;
             display: flex;
-            /* Flexbox 사용 */
             flex-direction: row;
-            /* 가로로 쌓기 */
             align-items: center;
-            /* 주축을 기준으로 수직 가운데 정렬 */
             justify-content: left;
-            /* 주축을 기준으로 수평 왼쪽 정렬 */
         }
 
         .picture {
@@ -36,7 +32,13 @@
             padding: 5px;
         }
 
-        .text {
+        .picture>img {
+            width: 400px;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .intro {
             margin-left: 80px;
         }
 
@@ -50,23 +52,35 @@
             margin-left: 10px;
         }
 
-        .btn {
+        .btn1 {
             margin: 0px 0px auto auto;
         }
 
         hr {
             width: 90%;
-            margin: 0px auto 50px;
+            margin: 0px auto;
         }
 
-        main > div {
+        main>div {
             margin: 50px auto;
-            width: 90%;
-            height: 500px;
+            width: 70%;
         }
 
-        .form-control {
+        .mycomment {
+            width: 60%;
+            margin: 0px auto;
+        }
+
+        #comments>div {
             width: 90%;
+            margin: 5px auto;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .delbtn {
+            margin: auto 0px auto auto;
         }
     </style>
 
@@ -74,8 +88,8 @@
         // Firebase SDK 라이브러리 가져오기
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { query, orderBy, serverTimestamp, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // Firebase 구성 정보 설정
         const firebaseConfig = {
@@ -90,36 +104,107 @@
         // Firebase 인스턴스 초기화
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        $("#commentbtn").click(async function () {
+            let comment = $("#comment").val();
+            if (comment) {
+                let doc = {
+                    'comment': comment,
+                    'createdAt': serverTimestamp() // 저장한 시간 기록
+                }
+
+                await addDoc(collection(db, "comments"), doc); // 서버에 저장
+                window.location.reload();
+            }
+        })
+
+        $(document).on("click", ".delbtn", async function () {
+            const $row = $(this).closest("[data-id]");
+            const id = $row.data("id");
+            if (!id) return;
+
+            await deleteDoc(doc(db, "comments", id)); // 서버에서 삭제
+            $row.remove(); // 화면에서 삭제
+        });
+
+        const q = query(
+            collection(db, "comments"),
+            orderBy("createdAt", "asc")
+        );
+
+        let docs = await getDocs(q); // 서버에서 불러오기
+        docs.forEach((doc) => {
+            let id = doc.id;
+            let row = doc.data();
+            let comment = row['comment'];
+
+            let temp_html = `           
+                <div class="px-3 py-2" data-id="${id}"> 
+                    <span>${comment}</span>
+                    <button type="button" class="btn btn-outline-secondary delbtn">삭제</button>
+                </div>`;
+            $("#comments").append(temp_html);
+        });
     </script>
 </head>
 
-<body>
+<body class="bg-light">
     <header>
         <div class="picture">
-            <img src="https://img.hankyung.com/photo/201706/AA.14077862.1.jpg" alt="사진" width="400px" height="300">
+            <img src="https://teamsparta.notion.site/image/attachment%3Afa1e49af-5932-4587-89f8-9be011c3443a%3A%EC%82%AC%EC%A7%84.jpg?table=block&id=2702dc3e-f514-8186-a638-c337a65d6f52&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&width=1420&userId=&cache=v2"
+                alt="사진">
         </div>
-        <div class="text">
+        <div class="intro">
             <h1 class="card-title">권민서</h1>
             <p class="card-text">MBTI: ISFJ</p>
             <p class="card-text">이메일: kms141516@gmail.com</p>
             <p class="card-text">블로그: https://velog.io/@minss_22/posts</p>
         </div>
-        <div class="btn">
+        <div class="btn1">
             <button type="button" class="btn btn-outline-info">수정</button>
         </div>
     </header>
+
     <hr />
     <main>
-        <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <div>
+            <h2>👩‍💻자기소개</h2><br>
+            안녕하세요! 대구 살고있는 27살 권민서입니다.<br><br>
+            휴학 기간 2년동안 사무 보조로 회사 생활을 하다가, 팀에 필요한 시스템을 직접 기획 및 개발하는 경험을 해보면서 개발자를 꿈꾸게 되었습니다.<br>
+            하지만 아직은 개발자가 되기 위한 역량이 부족하다 생각합니다.<br>
+            이제 내일배움캠프를 통해서 스스로 학습의 주체가 되어 실력을 갈고 닦아 경쟁력있는 개발자로 성장하겠습니다.<br><br>
+            잘 부탁드립니다!<br><br><br>
+
+            <h3>🔍취미</h3><br>
+            ⚾ 야구 좋아합니다!<br>
+            저는 대구사람이기 때문에 삼성 라이온즈 좋아합니다..😳<br><br>
+            ✈️ 여행 좋아합니다!<br>
+            회사 다니면서 모은 돈으로 복학 후 방학 때 유럽 한달 여행했었습니다.<br><br>
+            🖌️ 그림 그리는 거 좋아합니다!<br>
+            좋아하는 인물 따라 그리는 거 좋아합니다.<br><br>
         </div>
     </main>
     <hr />
+
     <footer>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Recipient’s username" aria-label="Recipient’s username"
-                aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+        <div class="mycomment">
+            <div class="card my-4">
+                <h5 class="card-header">댓글</h5>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <textarea id="comment" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-primary" id="commentbtn">댓글 작성</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="comments" class="card my-4">
+            </div>
         </div>
+        <hr />
     </footer>
 </body>
 
