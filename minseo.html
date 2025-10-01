@@ -56,11 +56,6 @@
             margin: 0px 0px auto auto;
         }
 
-        hr {
-            width: 90%;
-            margin: 0px auto;
-        }
-
         main>div {
             margin: 50px auto;
             width: 70%;
@@ -119,8 +114,8 @@
         })
 
         $(document).on("click", ".delbtn", async function () { // 댓글 삭제 기능
-            const id = $(this).parent().data("id");  // data-id 속성에서 문서 ID 가져오기
-            await deleteDoc(doc(db, "comments", id)); // Firestore 문서 삭제
+            const id = $(this).parent().attr("id");  // data-id 속성에서 문서 ID 가져오기
+            await deleteDoc(doc(db, "comments", id));  // firebase에서 문서 삭제
             $(this).parent().remove(); // 화면에서도 삭제
         });
 
@@ -131,12 +126,12 @@
 
         let docs = await getDocs(q); // 서버에서 불러오기
         docs.forEach((doc) => {
-            let id = doc.id;
+            let id = doc.id; // 문서 ID
             let row = doc.data();
             let comment = row['comment'];
 
             let temp_html = `           
-                <div class="px-3 py-2" data-id="${id}"> 
+                <div id="${id}"> 
                     <span>${comment}</span>
                     <button type="button" class="btn btn-outline-secondary delbtn">삭제</button>
                 </div>`;
@@ -160,7 +155,7 @@
         <button type="button" class="btn btn-outline-info mdfbtn">수정</button>
     </header>
 
-    <hr />
+    <hr style="width: 90%; margin: 0px auto;"/>
     <main>
         <div>
             <h2>👩‍💻자기소개</h2><br>
@@ -179,7 +174,7 @@
             좋아하는 인물 따라 그리는 거 좋아합니다.<br><br>
         </div>
     </main>
-    <hr />
+    <hr style="width: 90%; margin: 0px auto;"/>
 
     <footer>
         <div class="mycomment">
