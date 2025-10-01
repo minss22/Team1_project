@@ -114,7 +114,7 @@
         })
 
         $(document).on("click", ".delbtn", async function () { // 댓글 삭제 기능
-            const id = $(this).parent().attr("id");  // data-id 속성에서 문서 ID 가져오기
+            const id = $(this).parent().attr("id");  // 부모의 id
             await deleteDoc(doc(db, "comments", id));  // firebase에서 문서 삭제
             $(this).parent().remove(); // 화면에서도 삭제
         });
