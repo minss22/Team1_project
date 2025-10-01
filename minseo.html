@@ -42,7 +42,7 @@
             margin-left: 80px;
         }
 
-        .card-title {
+        .name {
             font-size: xxx-large;
             margin-bottom: 40px;
         }
@@ -52,7 +52,7 @@
             margin-left: 10px;
         }
 
-        .btn1 {
+        .mdfbtn {
             margin: 0px 0px auto auto;
         }
 
@@ -68,7 +68,7 @@
 
         .mycomment {
             width: 60%;
-            margin: 0px auto;
+            margin: 50px auto;
         }
 
         #comments>div {
@@ -105,31 +105,28 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        $("#commentbtn").click(async function () {
+        $("#cmtbtn").click(async function () { // 댓글 작성 기능
             let comment = $("#comment").val();
-            if (comment) {
+            if (comment) { // 작성한 댓글이 있으면
                 let doc = {
                     'comment': comment,
                     'createdAt': serverTimestamp() // 저장한 시간 기록
                 }
 
                 await addDoc(collection(db, "comments"), doc); // 서버에 저장
-                window.location.reload();
+                window.location.reload(); // 새로고침
             }
         })
 
-        $(document).on("click", ".delbtn", async function () {
-            const $row = $(this).closest("[data-id]");
-            const id = $row.data("id");
-            if (!id) return;
-
-            await deleteDoc(doc(db, "comments", id)); // 서버에서 삭제
-            $row.remove(); // 화면에서 삭제
+        $(document).on("click", ".delbtn", async function () { // 댓글 삭제 기능
+            const id = $(this).parent().data("id");  // data-id 속성에서 문서 ID 가져오기
+            await deleteDoc(doc(db, "comments", id)); // Firestore 문서 삭제
+            $(this).parent().remove(); // 화면에서도 삭제
         });
 
         const q = query(
             collection(db, "comments"),
-            orderBy("createdAt", "asc")
+            orderBy("createdAt", "asc") // 저장한 순서대로 정렬
         );
 
         let docs = await getDocs(q); // 서버에서 불러오기
@@ -155,14 +152,12 @@
                 alt="사진">
         </div>
         <div class="intro">
-            <h1 class="card-title">권민서</h1>
+            <h1 class="card-title name">권민서</h1>
             <p class="card-text">MBTI: ISFJ</p>
             <p class="card-text">이메일: kms141516@gmail.com</p>
             <p class="card-text">블로그: https://velog.io/@minss_22/posts</p>
         </div>
-        <div class="btn1">
-            <button type="button" class="btn btn-outline-info">수정</button>
-        </div>
+        <button type="button" class="btn btn-outline-info mdfbtn">수정</button>
     </header>
 
     <hr />
@@ -196,7 +191,7 @@
                             <textarea id="comment" class="form-control" rows="3"></textarea>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-outline-primary" id="commentbtn">댓글 작성</button>
+                            <button id="cmtbtn" type="button" class="btn btn-outline-primary">댓글 작성</button>
                         </div>
                     </form>
                 </div>
@@ -204,7 +199,6 @@
             <div id="comments" class="card my-4">
             </div>
         </div>
-        <hr />
     </footer>
 </body>
 
