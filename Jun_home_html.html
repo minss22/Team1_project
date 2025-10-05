@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <style>
+        .sett {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-pho {
+            padding-top: 150px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .main-pho-size {
+            width: auto;
+            height: 400px;
+        }
+
+        .main-pho-text {
+            font-size: 18px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+
+        .se-pho-size {
+            width: 400;
+            height: 400px;
+        }
+
+        .padding {
+
+            padding-left: 50px;
+        }
+
+        .m-padding {
+            margin-bottom: 50px;
+        }
+
+        /* 폰트 */
+        .do-hyeon-regular {
+            font-family: "Do Hyeon", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        /* 방명록 */
+        .Thread {
+            border: 1px solid black;
+            margin-bottom: 10px;
+            padding: 10px;
+
+        }
+
+        .Thread-font {
+            text-align: left;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .foot-href-bar {
+            text-decoration: none
+        }
+
+        .footer-velog {
+            font-size: 14px;
+            color: black;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+    </style>
+
+    <script type="module">
+        // Firebase SDK 라이브러리 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { doc as firestoreDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUZh_zWiSulQCAbCyDcGOmLfVIO472Ezs",
+            authDomain: "sparta-ef7dd.firebaseapp.com",
+            projectId: "sparta-ef7dd",
+            storageBucket: "sparta-ef7dd.firebasestorage.app",
+            messagingSenderId: "607107631828",
+            appId: "1:607107631828:web:68fdcb72d5447e30608941",
+            measurementId: "G-0EM00QCVE6"
+        };
+
+
+        // Firebase 인스턴스 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+
+        // 데이터 저장부분
+        $("#save").click(async function () {
+            // 1.넣고싶은 데이터 준비단계
+            let content = $('#content').val();
+            let writer = $('#writer').val();
+            let password = $('#password').val();
+            let time = new Date();
+            let day = time.getDate();
+            let month = time.getMonth() + 1;
+            let year = time.getFullYear();
+            let inputDate = year + "년" + month + "월" + day + "일";
+
+
+            let doc = {
+                // 2. 데이터 가공단계
+                'content': content,
+                'writer': writer,
+                'password': password,
+                'date': inputDate
+            };
+            // 3. 데이터 저장.
+            await addDoc(collection(db, "homepage"), doc);// << addDoc.id 이용 id 호출  >> deleteDoc <<  삭제  시간 데이터 넣어서 정렬 
+            // 4. 안내메세지 출력
+            alert('저장 완료~');
+            // 5. 새로고침(화면에 입력한 데이터가 그대로 남기때문에 새로고침으로 날려줘야한다.)
+            window.location.reload();
+        })
+
+        // 데이터 가져오기 부분
+        async function loadThreads() {
+            let docs = await getDocs(collection(db, "homepage"));
+            $('#Threaddivv').empty();
+            docs.forEach((firebaseDoc) => {
+                let row = firebaseDoc.data();
+                console.log(row);
+                let writer = row.writer;
+                let password = row.password;
+                let inputDate = row.date;
+
+                let temp_html = '<div class="Thread"> <div class="Thread-font">' + row.content + '</div>' + inputDate + ' ' + writer + '</div>' +
+                    '<button class="btn btn-warning rounded-pill px-3 edit-btn" data-id="' + firebaseDoc.id + '" type="button">수정</button>' +
+                    '<button class="btn btn-danger rounded-pill px-3 delete-btn" data-id="' + firebaseDoc.id + '" type="button">삭제</button></div>';
+                $('#Threaddivv').append(temp_html);
+            });
+        }
+
+        // 페이지 로드 시 목록 불러오기
+        loadThreads();
+
+        // 이벤트 바인딩
+        $(document).ready(function () {
+            $(document).on('click', '.edit-btn', async function () {
+                let id = $(this).data('id');
+                let newContent = prompt('수정 내용:');
+                if (newContent) {
+                    await updateDoc(firestoreDoc(db, "homepage", id), { content: newContent });
+                    loadThreads();
+                }
+
+            });
+            $(document).on('click', '.delete-btn', async function () {
+                let id = $(this).data('id');
+                let inputPw = prompt('비밀번호:');
+                let firebaseDocRef = firestoreDoc(db, "homepage", id);  // let 추가 확인
+                let snapshot = await getDoc(firebaseDocRef);
+                let row = snapshot.data();
+                if (inputPw === row?.password) {
+                    await deleteDoc(firebaseDocRef);
+                    loadThreads();
+                } else {
+                    alert('비밀번호 불일치');
+                }
+            });
+        });
+    </script>
+
+
+</head>
+
+<body>
+
+    <!--헤더-->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark do-hyeon-regular">
+        <div class="container-fluid"><a class="navbar-brand" href="#">
+                <font dir="auto" style="vertical-align: inherit;">
+                    <font dir="auto" style="vertical-align: inherit;">개밴져스</font>
+                </font>
+            </a>
+            <button aria-controls="navbarCollapse" aria-expanded="false" aria-label="탐색 전환" class="navbar-toggler"
+                data-bs-target="#navbarCollapse" data-bs-toggle="collapse" type="button"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item"><a aria-current="page" class="nav-link active" href="#">
+                            <font dir="auto" style="vertical-align: inherit;">
+                                <font dir="auto" style="vertical-align: inherit;">Home</font>
+                            </font>
+                        </a></li>
+                </ul>
+
+                <form class="d-flex" role="search"><input aria-label="찾다" class="form-control me-2" placeholder="검색"
+                        type="search">
+                    <button class="btn btn-outline-success" type="submit">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">검색</font>
+                        </font>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!--바디-->
+
+    <div class="container marketing m-padding do-hyeon-regular">
+        <div class="row">
+
+
+            <div class="main-pho ">
+                <img class="main-pho-size main-pho-position" alt="고양이우는중" style="vertical-align:middle;"
+                    src="https://dcimg1.dcinside.com/viewimage.php?id=26bcde23f1c460&no=24b0d769e1d32ca73ce985fa11d028315015801132de093a7d99d1d3d8dbab6ba987aeacab5711a09ef3565542b14d526c06950fafce9fcca05096a1946afd018f55dc">
+                <p class="main-pho-text">
+                    안녕하세요
+                    <br>1조의 팀원 신호준 입니다.
+                    <br>제 홈에 오신걸 환영합니다.
+                <div class="main-pho-text">제 자신을 소개하겠습니다.</div>
+                </p>
+            </div>
+
+
+
+            <hr class="featurette-divider">
+            <div class="row featurette">
+                <div class="col-md-7">
+                    <h2 class="featurette-heading fw-normal lh-1">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">인사 </font>
+                        </font><span class="text-body-secondary">
+
+                        </span>
+                    </h2>
+                    <p class="lead">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">안녕하세요! <br>신호준입니다. 경기도 안양에 거주하는 1998년생으로,
+                                현재 대학 졸업을 앞두고 있습니다.
+                                <br>제 MBTI는 INTJ로, 내향적이지만 외향성도 49%로 거의 균형을 이루고 있습니다.
+                                <br> 혼자 있는 시간이 가장 편안하지만, 사람들과의 교류도 즐기는 편입니다.
+                                <br>인근에 계신 분들이 있다면 친하게 지내면 좋겠습니다.
+                            </font>
+                            <br> 감사합니다.!
+                        </font>
+                    </p>
+                </div>
+                <div class="col-md-5">
+                    <img class="se-pho-size padding" src="new\rucidd.jpg" arg="">
+                </div>
+            </div>
+            <hr class="featurette-divider">
+            <div class="row featurette">
+                <div class="col-md-7 order-md-2">
+                    <h2 class="featurette-heading fw-normal lh-1">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">취미 </font>
+                        </font><span class="text-body-secondary">
+                        </span>
+                    </h2>
+                    <p class="lead">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">제 최근 취미는 외국인 친구들과 회화 연습을 하는 것입니다.
+                                <br>제게는 친한 외국인 친구 7명이 있는데, 그중 일본인 3명, 중국인 4명이 있고,
+                                <br>일본인 친구 3명과는 일본어로, 중국인 친구 4명과는 영어로 대화하며 시간을 보내고 있습니다.
+                                <br>외국인 친구들과 대화하는것은 최근 준비하고있는 일본어 자격증에도 큰 도움이 되고있습니다.
+                                <br>외국어를 배우고 싶으신 분들께 해외 친구를 사귀는 것을 적극 추천드립니다!
+                            </font>
+                        </font>
+                    </p>
+                </div>
+                <div class="col-md-5 order-md-1">
+                    <img class="se-pho-size padding" src="new\jp.jpg" arg="">
+                </div>
+            </div>
+            <hr class="featurette-divider">
+            <div class="row featurette">
+                <div class="col-md-7">
+                    <h2 class="featurette-heading fw-normal lh-1">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">마무리 인사</font>
+                        </font><span class="text-body-secondary">
+                        </span>
+                    </h2>
+                    <p class="lead">
+                        <font dir="auto" style="vertical-align: inherit;">
+                            <font dir="auto" style="vertical-align: inherit;">
+                                마지막으로, 매일 아침 9시부터 저녁 9시까지 열심히 공부하시는<br>
+                                여러분을 응원합니다.<br>
+                                긴 시간 동안 지치고 힘드실 테지만, 끝까지 포기하지 않고<br>
+                                완주하셨으면 좋겠습니다.<br>
+                                여러분의 앞날에 행운 가득하길 기원합니다!<br>
+                                감사합니다!
+                            </font>
+                        </font>
+                    </p>
+                </div>
+                <div class="col-md-5">
+                    <img class="se-pho-size" src="new\yoroming.jpg" arg="">
+                </div>
+            </div>
+            <hr class="featurette-divider"> <!-- /END THE FEATURETTES -->
+        </div>
+        <div class="Thread" id="Threaddiv">
+            <!-- 방명록 -->
+            <h1>방명록 입력</h1>
+            <textarea id="content" rows="4" cols="92" placeholder="내용" class="Thread-font"></textarea>
+            <br><input type="text" id="writer" placeholder="작성자">
+            <input type="text" id="password" placeholder="비밀 번호">
+            <button id="save" type="button">저장</button>
+
+        </div>
+
+        <div>
+            <h1>방명록</h1>
+            <div id="Threaddivv"> </div>
+
+        </div>
+
+
+
+        <script>
+            // saveThread() 함수 삭제 (충돌 방지)
+        </script>
+
+        <!-- foot -->
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center"> <span class="mb-3 mb-md-0 text-body-secondary">© 2025
+                    Company, Inc</span> </div>
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                <a href=" https://www.instagram.com/hjun1_7/ " class="foot-href-bar footer-velog"><i class="bi bi-instagram"></i>
+                    <use xlink:href="#instagram"></use>
+                    </li>
+                </a>
+                <a href="https://www.facebook.com/?locale=ko_KR" class="foot-href-bar footer-velog"><i class="bi bi-facebook"></i>
+                    <use xlink:href="#facebook"></use>
+                    </li>
+                </a>
+
+            </ul>
+        </footer>
+
+
+        <script crossorigin="anonymous"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
