@@ -116,12 +116,12 @@
                     'createdAt': serverTimestamp() // 저장한 시간 기록
                 }
 
-                const adddoc = await addDoc(collection(db, "comments"), doc); // 서버에 저장
+                const docRef = await addDoc(collection(db, "comments"), doc); // 서버에 저장
 
                 let temp_html = `
-                    <div id="${adddoc.id}"> 
+                    <div id="${docRef.id}"> 
                         <span>${comment}</span>
-                        <button type="button" class="btn btn-outline-secondary delbtn">삭제</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm delbtn">삭제</button>
                     </div>`;
                 $("#comments").append(temp_html);
                 $("#comment").val(""); // 입력창 비움
