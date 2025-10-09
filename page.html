@@ -246,6 +246,8 @@
             const id = $(this).closest("li").data("id");
             await deleteDoc(doc(db, "Team1_project", id));
             alert("삭제완료!")
+
+            window.location.reload();
         });
 
         const col = collection(db, "Team1_project");
